@@ -68,7 +68,7 @@ end
 get '/' do
   # If we haven't authorized and authenticated yet, show a simple page with a button to redirect the
   # user to authorize our app.  Typically you'd be checking for an existing access token from some sort
-  # of persisten storage, but in this demo we're simply using an in-memory Ruby Hash stored in
+  # of persistent storage, but in this demo we're simply using an in-memory Ruby Hash stored in
   # settings.access_token.
   if settings.access_token.empty?
 
