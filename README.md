@@ -3,7 +3,7 @@ users authorize your app with Gazelle and then fetching data.
 
 ### Instructions
 
-To install, run `bundle install` to install the Ruby gems.
+To install the needed Ruby gems run `bundle install`.
 
 To run you will first need to have created a Gazelle App in the
 [developer console](https://gazelleapp.io/developer).
@@ -13,14 +13,14 @@ to redirect to once a user has authorized your App. The callback URL must be
 included in the list of authorized callback URLs you configured for your
 Gazelle App in the developer console.
 
-Finally, run the demo with just `ruby server.rb`:
+Finally, run the demo with just `bundle exec ruby server.rb`:
 
 ```bash
 export GAZELLE_APP_ID=YOUR_ID
 export GAZELLE_APP_SECRET=YOUR_SECRE
 export GAZELLE_APP_CALLBACK_URL=http://localhost:4567/callback
 
-ruby server.rb
+bundle exec ruby server.rb
 ```
 
 Then open your browser to http://localhost:4567 and follow the instructions.
