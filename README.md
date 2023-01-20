@@ -8,3 +8,5 @@ ruby server.rb
 ```
 
 Then open your browser to http://localhost:4567 and follow the instructions.
+
+Full API documentation can be found here: https://gazelleapp.io/docs/graphql/private/
