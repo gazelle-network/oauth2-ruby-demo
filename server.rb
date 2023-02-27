@@ -76,8 +76,22 @@ get '/' do
     # method defined up above to create an instance of an OAuth2::Client.
     client = oauth2_client
 
+    # Optional.  You can include a state parameter to help prevent CSRF attacks.  This state parameter
+    # can be anything you'd like, but it's typically a random string.  Since it is a string, you can actually
+    # pass JSON and a small unique identifier for the user in your system if you'd like.
+    # Here's an example of how you might do that:
+    state = {
+      user_id: 123,
+      csrf_token: SecureRandom.hex(16)
+    }.to_json
+
+    # If you're passing state along, typically here you would save the CSRF somewhere that can be retrieved
+    # later when the user is redirected back to your app.  For this demo we're just going to pass it along
+    # and not verify it, but you should definitely do this in a real app.
+
     # Use the Client object to generate an authorization URL for your Gazelle App id, secret, and callback url.
-    @authorize_url = client.auth_code.authorize_url(redirect_uri: settings.gazelle_app_callback_url)
+    # Passing state is optional as noted above.
+    @authorize_url = client.auth_code.authorize_url(redirect_uri: settings.gazelle_app_callback_url, state: state)
 
     # Render the not_authenticated_yet template and return it.
     erb :not_authenticated_yet
@@ -106,6 +120,18 @@ get '/callback' do
 
   # Use the temporary grant code in the request's query parameter to retrieve an access token.
   access_token = client.auth_code.get_token(params["code"], redirect_uri: settings.gazelle_app_callback_url)
+
+  # Optional:  If you passed state in the query parameter of the authorize URL, it will be passed back to you
+  # in the state query parameter of the callback URL.  You can use this to verify that the user is who they
+  # say they are by verifying the CSRF token you included, and pull off an identifier for the user in your
+  # system if you included one.
+  if params["state"]
+    state = JSON.parse(params["state"])
+
+    my_user_id = state["user_id"]
+    my_csrf_token = state["csrf_token"]
+    # ... do something with these values ...
+  end
 
   # Now hang on to the access token so that we can use it on subsequent requests to make API calls.
   # Typically you'd hang on to the access token in some more persistent storage system, but for this
