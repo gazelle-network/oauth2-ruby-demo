@@ -1,5 +1,6 @@
 This is a very simple Ruby Sinatra app demonstrating the process of having your
-users authorize your app with Gazelle and then fetching data.
+users authorize your app with Gazelle, fetching data, and refreshing the access
+token once it expires.
 
 ### Instructions
 

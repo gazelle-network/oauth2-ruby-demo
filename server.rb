@@ -106,6 +106,26 @@ get '/' do
     # storage system than we're using in this demo.
     access_token = OAuth2::AccessToken.from_hash(client, settings.access_token[:token_hash])
 
+    # Access tokens are valid for 30 days.  Once one has expired, use its refresh token to get a new access
+    # token.  See https://gazelleapp.io/docs/graphql/private/authentication#refreshing
+    if access_token.expired?
+      begin
+        # The OAuth2 gem POSTs the refresh token to the token_url with grant_type=refresh_token and returns
+        # a brand new OAuth2::AccessToken.
+        access_token = access_token.refresh
+
+        # The response includes a new refresh token too, and the old one stops working once the new access
+        # token is used, so save the whole new token in place of the old one.  Typically you'd write this
+        # back to the same persistent storage you read it from.
+        settings.access_token[:token_hash] = access_token.to_hash
+      rescue OAuth2::Error
+        # If the token hasn't been refreshed for 90 days, or the user revoked your app's access, the refresh
+        # will fail.  Forget the old token and send the user back through the authorization flow.
+        settings.access_token.clear
+        redirect "/"
+      end
+    end
+
     # Retrieve 5 pianos
     @five_pianos = retrieve_five_pianos(access_token)
 
